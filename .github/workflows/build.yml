@@ -113,7 +113,7 @@ jobs:
           cache-read-only: true
 
       - name: Run Plugin Verification tasks
-        run: ./gradlew verifyPlugin runPluginVerifier
+        run: ./gradlew verifyPlugin
 
       - name: Collect Plugin Verifier Result
         if: ${{ always() }}
