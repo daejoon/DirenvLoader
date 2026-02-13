@@ -53,10 +53,6 @@ intellijPlatform {
             sinceBuild = providers.gradleProperty("sinceBuildVersion")
             untilBuild = providers.gradleProperty("untilBuildVersion")
         }
-
-        vendor {
-            name = "daejoon"
-        }
     }
 
     // 플러그인 서명 설정 (환경변수 미설정 시 자동 스킵)
