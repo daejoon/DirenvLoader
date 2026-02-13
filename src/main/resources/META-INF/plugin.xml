@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>com.github.direnvloader</id>
+    <id>com.ddoong2.direnvloader</id>
     <name>Direnv Loader</name>
     <vendor>daejoon</vendor>
     <description><![CDATA[
@@ -15,6 +15,6 @@
                 id="Direnv Loader"
                 displayType="BALLOON"/>
         <runConfigurationExtension
-                implementation="com.github.direnvloader.DirenvRunConfigurationExtension"/>
+                implementation="com.ddoong2.direnvloader.DirenvRunConfigurationExtension"/>
     </extensions>
 </idea-plugin>
