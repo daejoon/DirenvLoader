@@ -1,4 +1,4 @@
-package com.github.direnvloader;
+package com.ddoong2.direnvloader;
 
 import com.intellij.openapi.util.Key;
 

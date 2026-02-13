@@ -1,4 +1,4 @@
-package com.github.direnvloader;
+package com.ddoong2.direnvloader;
 
 // direnv 실행 관련 예외
 public class DirenvException extends Exception {

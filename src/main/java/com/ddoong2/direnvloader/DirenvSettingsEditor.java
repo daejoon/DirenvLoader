@@ -1,4 +1,4 @@
-package com.github.direnvloader;
+package com.ddoong2.direnvloader;
 
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.openapi.options.SettingsEditor;

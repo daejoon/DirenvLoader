@@ -1,4 +1,4 @@
-package com.github.direnvloader;
+package com.ddoong2.direnvloader;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunConfigurationExtension;
@@ -18,7 +18,7 @@ import java.util.Map;
 // Run Configuration에 direnv 환경변수 주입 기능을 추가하는 Extension
 public class DirenvRunConfigurationExtension extends RunConfigurationExtension {
 
-    private static final String SERIALIZATION_ID = "com.github.direnvloader";
+    private static final String SERIALIZATION_ID = "com.ddoong2.direnvloader";
     private static final String ATTR_ENABLED = "direnv-enabled";
     private static final String ATTR_TRUST = "direnv-trust";
 

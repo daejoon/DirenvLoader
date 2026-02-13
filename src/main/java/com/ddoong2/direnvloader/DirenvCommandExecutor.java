@@ -1,4 +1,4 @@
-package com.github.direnvloader;
+package com.ddoong2.direnvloader;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
