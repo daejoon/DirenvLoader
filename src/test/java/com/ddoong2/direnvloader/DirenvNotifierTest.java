@@ -49,4 +49,33 @@ class DirenvNotifierTest {
         assertEquals(NotificationType.INFORMATION, notification.getType());
         assertTrue(notification.getContent().contains("5"));
     }
+
+    // direnv 미설치 알림이 영문 메시지를 포함하는지 확인
+    @Test
+    void notifyNotInstalled_containsEnglishMessage() {
+        Notification notification = DirenvNotifier.createNotInstalledNotification();
+        assertTrue(notification.getContent().contains("not installed"));
+    }
+
+    // .envrc blocked 알림이 영문 메시지를 포함하는지 확인
+    @Test
+    void notifyBlocked_containsEnglishMessage() {
+        Notification notification = DirenvNotifier.createBlockedNotification();
+        assertTrue(notification.getContent().contains("not allowed"));
+    }
+
+    // 오류 알림이 영문 메시지를 포함하는지 확인
+    @Test
+    void notifyError_containsEnglishMessage() {
+        Notification notification = DirenvNotifier.createErrorNotification("test error");
+        assertTrue(notification.getContent().contains("Error occurred"));
+    }
+
+    // 로드 성공 알림이 영문 메시지를 포함하는지 확인
+    @Test
+    void notifyLoaded_containsEnglishMessage() {
+        Notification notification = DirenvNotifier.createLoadedNotification(3);
+        assertTrue(notification.getContent().contains("Loaded"));
+        assertTrue(notification.getContent().contains("3"));
+    }
 }

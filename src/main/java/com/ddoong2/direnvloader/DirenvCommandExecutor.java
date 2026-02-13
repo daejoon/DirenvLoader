@@ -32,7 +32,7 @@ public final class DirenvCommandExecutor {
             Map<String, String> result = GSON.fromJson(json, MAP_TYPE);
             return result != null ? result : Collections.emptyMap();
         } catch (JsonSyntaxException e) {
-            throw new RuntimeException("direnv JSON 파싱 실패: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to parse direnv JSON: " + e.getMessage(), e);
         }
     }
 
@@ -44,7 +44,7 @@ public final class DirenvCommandExecutor {
             if (stderr.contains("is blocked")) {
                 throw new DirenvBlockedException(stderr);
             }
-            throw new DirenvException("direnv export 실패 (exit code " + output.getExitCode() + "): " + stderr);
+            throw new DirenvException("direnv export failed (exit code " + output.getExitCode() + "): " + stderr);
         }
         String stdout = output.getStdout().trim();
         return parseExportJson(stdout);
@@ -54,7 +54,7 @@ public final class DirenvCommandExecutor {
     public static void allow(File workDir) throws DirenvException {
         ProcessOutput output = execute("allow", null, workDir);
         if (output.getExitCode() != 0) {
-            throw new DirenvException("direnv allow 실패: " + output.getStderr().trim());
+            throw new DirenvException("direnv allow failed: " + output.getStderr().trim());
         }
     }
 
@@ -83,13 +83,13 @@ public final class DirenvCommandExecutor {
             CapturingProcessHandler handler = new CapturingProcessHandler(cmd);
             ProcessOutput output = handler.runProcess(TIMEOUT_MS);
             if (output.isTimeout()) {
-                throw new DirenvException("direnv 명령이 타임아웃되었습니다 (" + TIMEOUT_MS + "ms)");
+                throw new DirenvException("direnv command timed out (" + TIMEOUT_MS + "ms)");
             }
             return output;
         } catch (DirenvException e) {
             throw e;
         } catch (Exception e) {
-            throw new DirenvException("direnv 실행 실패: " + e.getMessage(), e);
+            throw new DirenvException("Failed to execute direnv: " + e.getMessage(), e);
         }
     }
 }

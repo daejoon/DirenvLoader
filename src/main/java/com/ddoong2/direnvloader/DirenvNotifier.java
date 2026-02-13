@@ -18,7 +18,7 @@ public final class DirenvNotifier {
         return new Notification(
                 GROUP_ID,
                 TITLE,
-                "direnv가 설치되어 있지 않습니다. direnv를 설치한 후 다시 시도하세요.",
+                "direnv is not installed. Please install direnv and try again.",
                 NotificationType.WARNING
         );
     }
@@ -28,7 +28,7 @@ public final class DirenvNotifier {
         return new Notification(
                 GROUP_ID,
                 TITLE,
-                ".envrc가 허용되지 않았습니다. 'Trust .envrc' 옵션을 활성화하거나 터미널에서 'direnv allow'를 실행하세요.",
+                ".envrc is not allowed. Enable 'Trust .envrc' or run 'direnv allow' in terminal.",
                 NotificationType.WARNING
         );
     }
@@ -38,7 +38,7 @@ public final class DirenvNotifier {
         return new Notification(
                 GROUP_ID,
                 TITLE,
-                "direnv 실행 중 오류가 발생했습니다: " + message,
+                "Error occurred while running direnv: " + message,
                 NotificationType.ERROR
         );
     }
@@ -48,7 +48,7 @@ public final class DirenvNotifier {
         return new Notification(
                 GROUP_ID,
                 TITLE,
-                "direnv 환경변수 " + count + "개를 로드했습니다.",
+                "Loaded " + count + " direnv environment variable(s).",
                 NotificationType.INFORMATION
         );
     }
