@@ -39,4 +39,14 @@ class DirenvNotifierTest {
         assertEquals(NotificationType.ERROR, notification.getType());
         assertTrue(notification.getContent().contains(message));
     }
+
+    // 환경변수 로드 성공 알림이 INFORMATION 타입이고 개수를 포함하는지 확인
+    @Test
+    void notifyLoaded() {
+        Notification notification = DirenvNotifier.createLoadedNotification(5);
+
+        assertEquals("Direnv Loader", notification.getGroupId());
+        assertEquals(NotificationType.INFORMATION, notification.getType());
+        assertTrue(notification.getContent().contains("5"));
+    }
 }

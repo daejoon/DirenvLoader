@@ -43,7 +43,21 @@ public final class DirenvNotifier {
         );
     }
 
+    // 환경변수 로드 성공 Notification 생성
+    static Notification createLoadedNotification(int count) {
+        return new Notification(
+                GROUP_ID,
+                TITLE,
+                "direnv 환경변수 " + count + "개를 로드했습니다.",
+                NotificationType.INFORMATION
+        );
+    }
+
     // 프로젝트에 알림 전송
+    public static void notifyLoaded(Project project, int count) {
+        createLoadedNotification(count).notify(project);
+    }
+
     public static void notifyNotInstalled(Project project) {
         createNotInstalledNotification().notify(project);
     }

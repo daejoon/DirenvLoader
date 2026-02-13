@@ -1,10 +1,10 @@
 package com.github.direnvloader;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.RunConfigurationExtension;
+import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.RunnerSettings;
-import com.intellij.execution.configuration.RunConfigurationExtensionBase;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
@@ -16,8 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 // Run Configuration에 direnv 환경변수 주입 기능을 추가하는 Extension
-public class DirenvRunConfigurationExtension
-        extends RunConfigurationExtensionBase<RunConfigurationBase<?>> {
+public class DirenvRunConfigurationExtension extends RunConfigurationExtension {
 
     private static final String SERIALIZATION_ID = "com.github.direnvloader";
     private static final String ATTR_ENABLED = "direnv-enabled";
@@ -59,8 +58,9 @@ public class DirenvRunConfigurationExtension
         return true;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public boolean isEnabledFor(@NotNull RunConfigurationBase<?> applicableConfiguration,
+    public boolean isEnabledFor(@NotNull RunConfigurationBase applicableConfiguration,
                                 @Nullable RunnerSettings runnerSettings) {
         DirenvSettings settings = applicableConfiguration.getCopyableUserData(DirenvSettings.KEY);
         return settings != null && settings.isEnabled();
@@ -72,11 +72,12 @@ public class DirenvRunConfigurationExtension
         return new DirenvSettingsEditor<>();
     }
 
+    // direnv 환경변수를 Java 실행 파라미터에 주입
     @Override
-    protected void patchCommandLine(@NotNull RunConfigurationBase<?> configuration,
-                                    @Nullable RunnerSettings runnerSettings,
-                                    @NotNull GeneralCommandLine cmdLine,
-                                    @NotNull String runnerId) throws ExecutionException {
+    public <T extends RunConfigurationBase<?>> void updateJavaParameters(
+            @NotNull T configuration,
+            @NotNull JavaParameters params,
+            @Nullable RunnerSettings runnerSettings) throws ExecutionException {
         DirenvSettings settings = configuration.getCopyableUserData(DirenvSettings.KEY);
         if (settings == null || !settings.isEnabled()) {
             return;
@@ -88,7 +89,7 @@ public class DirenvRunConfigurationExtension
         // direnv 설치 확인
         if (!DirenvCommandExecutor.isDirenvInstalled()) {
             DirenvNotifier.notifyNotInstalled(project);
-            throw new ExecutionException("direnv가 설치되어 있지 않습니다.");
+            throw new ExecutionException("direnv is not installed.");
         }
 
         try {
@@ -99,12 +100,12 @@ public class DirenvRunConfigurationExtension
 
             // direnv export json으로 환경변수 로드
             Map<String, String> direnvEnv = DirenvCommandExecutor.exportJson(workDir);
-            Map<String, String> rcEnv = cmdLine.getEnvironment();
+            Map<String, String> rcEnv = params.getEnv();
             Map<String, String> merged = mergeEnvironment(direnvEnv, rcEnv);
 
             // 병합된 환경변수 적용
-            cmdLine.getEnvironment().clear();
-            cmdLine.getEnvironment().putAll(merged);
+            params.setEnv(merged);
+            DirenvNotifier.notifyLoaded(project, direnvEnv.size());
 
         } catch (DirenvBlockedException e) {
             DirenvNotifier.notifyBlocked(project);
