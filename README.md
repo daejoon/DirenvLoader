@@ -3,8 +3,8 @@
 <!-- 🔧 Marketplace 퍼블리시 후 PLUGIN_ID를 실제 숫자 ID로 교체하세요 -->
 <!-- 🔧 GitHub Actions 워크플로우 추가 후 Build 배지의 워크플로우 이름을 맞춰주세요 -->
 ![Build](https://github.com/daejoon/DirenvLoader/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/PLUGIN_ID-direnv-loader.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID-direnv-loader)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID-direnv-loader.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID-direnv-loader)
+[![Version](https://img.shields.io/jetbrains/plugin/v/30187-direnv-loader.svg)](https://plugins.jetbrains.com/plugin/30187-direnv-loader)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/30187-direnv-loader.svg)](https://plugins.jetbrains.com/plugin/30187-direnv-loader)
 
 [direnv](https://direnv.net/) 환경변수를 IntelliJ 계열 IDE의 Run Configuration에 자동으로 주입하는 플러그인입니다.
 [better-direnv](https://github.com/Fapiko/intellij-better-direnv)가 더 이상 유지보수되지 않아 대체 플러그인으로 개발되었습니다.
