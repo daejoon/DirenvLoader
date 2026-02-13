@@ -13,5 +13,7 @@
         <notificationGroup
                 id="Direnv Loader"
                 displayType="BALLOON"/>
+        <runConfigurationExtension
+                implementation="com.github.direnvloader.DirenvRunConfigurationExtension"/>
     </extensions>
 </idea-plugin>
