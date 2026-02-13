@@ -1,3 +1,5 @@
+import org.jetbrains.changelog.Changelog
+
 plugins {
     id("java")
     id("org.jetbrains.intellij.platform") version "2.3.0"
@@ -36,9 +38,49 @@ dependencies {
 intellijPlatform {
     pluginConfiguration {
         name = providers.gradleProperty("pluginName")
+        version = providers.gradleProperty("pluginVersion")
+
+        // CHANGELOG.md에서 현재 버전 또는 Unreleased 변경 내역을 HTML로 변환하여 주입
+        changeNotes = provider {
+            changelog.renderItem(
+                changelog.getOrNull(providers.gradleProperty("pluginVersion").get())
+                    ?: changelog.getUnreleased(),
+                Changelog.OutputType.HTML
+            )
+        }
+
         ideaVersion {
             sinceBuild = providers.gradleProperty("sinceBuildVersion")
             untilBuild = providers.gradleProperty("untilBuildVersion")
+        }
+
+        vendor {
+            name = "daejoon"
+        }
+    }
+
+    // 플러그인 서명 설정 (환경변수 미설정 시 자동 스킵)
+    signing {
+        certificateChain = providers.environmentVariable("CERTIFICATE_CHAIN")
+        privateKey = providers.environmentVariable("PRIVATE_KEY")
+        password = providers.environmentVariable("PRIVATE_KEY_PASSWORD")
+    }
+
+    // JetBrains Marketplace 배포 설정
+    publishing {
+        token = providers.environmentVariable("PUBLISH_TOKEN")
+        // 버전에 alpha/beta/rc 포함 시 beta 채널, 아니면 default 채널
+        channels = providers.gradleProperty("pluginVersion").map {
+            listOf(
+                if (it.contains("beta") || it.contains("rc") || it.contains("alpha")) "beta" else "default"
+            )
+        }
+    }
+
+    // Plugin Verifier로 호환성 검증
+    pluginVerification {
+        ides {
+            recommended()
         }
     }
 }
