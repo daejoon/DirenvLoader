@@ -1,0 +1,17 @@
+<idea-plugin>
+    <id>com.github.direnvloader</id>
+    <name>Direnv Loader</name>
+    <vendor>daejoon</vendor>
+    <description><![CDATA[
+    Run Configuration 실행 시 direnv 환경변수를 자동으로 주입합니다.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup
+                id="Direnv Loader"
+                displayType="BALLOON"/>
+    </extensions>
+</idea-plugin>
