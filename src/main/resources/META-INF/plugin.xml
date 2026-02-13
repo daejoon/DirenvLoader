@@ -3,7 +3,40 @@
     <name>Direnv Loader</name>
     <vendor>daejoon</vendor>
     <description><![CDATA[
-    Run Configuration 실행 시 direnv 환경변수를 자동으로 주입합니다.
+    <h2>Direnv Loader</h2>
+    <p>
+        Automatically injects <a href="https://direnv.net/">direnv</a>-managed environment variables
+        into IntelliJ Run Configurations at execution time.
+    </p>
+
+    <h3>Features</h3>
+    <ul>
+        <li><b>Automatic Environment Injection</b> — When a Run Configuration starts,
+            the plugin runs <code>direnv export json</code> in your project directory
+            and merges the resulting environment variables into the process.</li>
+        <li><b>Per-Configuration Control</b> — Enable or disable direnv loading independently
+            for each Run Configuration via two simple checkboxes in the Run Configuration editor.</li>
+        <li><b>Trust Management</b> — Optionally auto-allow blocked <code>.envrc</code> files
+            with the "Trust .envrc" option, eliminating the need to run <code>direnv allow</code> manually.</li>
+        <li><b>Broad Run Configuration Support</b> — Works with Java applications, JUnit tests,
+            Gradle tasks, Spring Boot configurations, and any other Run Configuration type.</li>
+        <li><b>Non-Intrusive Notifications</b> — Displays balloon notifications for success
+            (number of loaded variables), warnings (direnv not installed, .envrc blocked),
+            and errors (command failures, timeouts).</li>
+    </ul>
+
+    <h3>How It Works</h3>
+    <ol>
+        <li>Open any Run Configuration and check <b>"Enable Direnv"</b> in the Direnv settings panel.</li>
+        <li>Optionally check <b>"Trust .envrc"</b> to auto-allow your <code>.envrc</code> file.</li>
+        <li>Run your configuration — direnv environment variables are automatically loaded and applied.</li>
+    </ol>
+
+    <h3>Requirements</h3>
+    <ul>
+        <li><a href="https://direnv.net/">direnv</a> must be installed and available on your system PATH.</li>
+        <li>A valid <code>.envrc</code> file in your project directory.</li>
+    </ul>
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
