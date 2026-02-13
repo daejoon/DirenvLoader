@@ -20,6 +20,7 @@ dependencies {
         create(type, version)
 
         bundledPlugin("com.intellij.java")
+        bundledPlugin("com.intellij.spring.boot")
 
         testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
     }
