@@ -1,0 +1,3 @@
+<idea-plugin>
+    <!-- Spring Boot Run Configuration 지원을 위한 optional dependency config -->
+</idea-plugin>

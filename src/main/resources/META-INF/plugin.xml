@@ -8,6 +8,7 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>
+    <depends optional="true" config-file="direnv-spring-boot.xml">com.intellij.spring.boot</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup
