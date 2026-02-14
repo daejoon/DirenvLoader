@@ -17,6 +17,22 @@
 - **다양한 Run Configuration 지원** — Java Application, JUnit, Gradle Task, Spring Boot 등 대부분의 Run Configuration 타입에서 동작합니다.
 - **알림 제공** — 환경변수 로드 성공(변수 수), 경고(direnv 미설치, `.envrc` blocked), 오류(명령 실패, 타임아웃)를 Balloon 알림으로 표시합니다.
 
+## Installation
+
+### JetBrains Marketplace에서 설치 (권장)
+
+1. IDE에서 **Settings/Preferences** → **Plugins** → **Marketplace** 탭을 엽니다.
+2. **"Direnv Loader"** 를 검색합니다.
+3. **Install** 버튼을 클릭하고 IDE를 재시작합니다.
+
+또는 [JetBrains Marketplace 페이지](https://plugins.jetbrains.com/plugin/30187-direnv-loader)에서 직접 설치할 수 있습니다.
+
+### 디스크에서 수동 설치
+
+1. [Releases](https://github.com/daejoon/DirenvLoader/releases) 페이지에서 최신 `.zip` 파일을 다운로드합니다.
+2. IDE에서 **Settings/Preferences** → **Plugins** → ⚙️ → **Install Plugin from Disk...** 를 선택합니다.
+3. 다운로드한 `.zip` 파일을 선택하고 IDE를 재시작합니다.
+
 ## How It Works
 
 1. Run Configuration을 열고 Direnv 설정 패널에서 **"Enable Direnv"** 를 체크합니다.
