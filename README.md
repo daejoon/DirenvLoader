@@ -1,4 +1,4 @@
-# Direnv Loader
+# <img src="src/main/resources/META-INF/pluginIcon.svg" width="28" height="28" alt="Direnv Loader Icon"> Direnv Loader
 
 <!-- 🔧 Marketplace 퍼블리시 후 PLUGIN_ID를 실제 숫자 ID로 교체하세요 -->
 <!-- 🔧 GitHub Actions 워크플로우 추가 후 Build 배지의 워크플로우 이름을 맞춰주세요 -->
