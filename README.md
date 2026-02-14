@@ -39,6 +39,18 @@
 2. 필요시 **"Trust .envrc"** 를 체크하여 `.envrc` 파일을 자동 허용합니다.
 3. Run Configuration을 실행하면 direnv 환경변수가 자동으로 로드됩니다.
 
+## Environment Variable Priority
+
+Run Configuration 실행 시 환경변수는 다음 순서로 병합되며, **뒤에 오는 값이 앞의 값을 덮어씁니다**.
+
+| 우선순위 | 출처 | 설명 |
+|:---:|------|------|
+| 1 | `direnv export json` | `.envrc` 파일에서 정의된 환경변수 |
+| 2 | **Run Configuration 환경변수** | IDE에서 사용자가 직접 설정한 환경변수 (최우선) |
+
+- **Run Configuration 환경변수가 항상 direnv보다 우선**합니다. 동일한 키가 있으면 사용자가 IDE에서 설정한 값이 적용됩니다.
+- direnv가 실행되는 **작업 디렉토리**는 프로젝트 루트 경로(`project.getBasePath()`)를 사용하며, `.envrc` 파일 탐색은 direnv CLI에 위임됩니다.
+
 ## Requirements
 
 - [direnv](https://direnv.net/)가 시스템 PATH에 설치되어 있어야 합니다.

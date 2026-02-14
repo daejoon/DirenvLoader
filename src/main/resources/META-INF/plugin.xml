@@ -32,6 +32,21 @@
         <li>Run your configuration — direnv environment variables are automatically loaded and applied.</li>
     </ol>
 
+    <h3>Environment Variable Priority</h3>
+    <p>
+        When a Run Configuration is executed, environment variables are merged in the following order.
+        <b>Higher priority values override lower ones</b> when the same key exists.
+    </p>
+    <table>
+        <tr><th>Priority</th><th>Source</th><th>Description</th></tr>
+        <tr><td>1</td><td><code>direnv export json</code></td><td>Variables defined in your <code>.envrc</code> file</td></tr>
+        <tr><td>2</td><td><b>Run Configuration</b></td><td>Variables explicitly set by the user in the IDE (highest priority)</td></tr>
+    </table>
+    <ul>
+        <li>Run Configuration variables <b>always take precedence</b> over direnv variables.</li>
+        <li>The working directory for direnv is resolved from the <b>project root path</b>, and <code>.envrc</code> file lookup is delegated to the direnv CLI.</li>
+    </ul>
+
     <h3>Requirements</h3>
     <ul>
         <li><a href="https://direnv.net/">direnv</a> must be installed and available on your system PATH.</li>
