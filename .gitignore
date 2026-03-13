@@ -160,7 +160,5 @@ replay_pid*
 .codex/
 .claude/
 .intellijPlatform/
-AGENTS.md
-CLAUDE.md
 *.iml
 
