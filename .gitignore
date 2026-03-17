@@ -159,6 +159,8 @@ replay_pid*
 .idea/
 .codex/
 .claude/
+.serena/
+CLAUDE.md
 .intellijPlatform/
 *.iml
 
