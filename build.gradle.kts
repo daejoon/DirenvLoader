@@ -2,8 +2,8 @@ import org.jetbrains.changelog.Changelog
 
 plugins {
     id("java")
-    id("org.jetbrains.intellij.platform") version "2.3.0"
-    id("org.jetbrains.changelog") version "2.5.0"
+    alias(libs.plugins.intellij.platform)
+    alias(libs.plugins.changelog)
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -28,11 +28,11 @@ dependencies {
         testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
     }
 
-    testImplementation(platform("org.junit:junit-bom:5.11.4"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter)
     // IntelliJ Platform SDK 테스트 프레임워크가 junit.framework.TestCase를 참조하므로 런타임에 필요
-    testRuntimeOnly("junit:junit:4.13.2")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly(libs.junit4)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 intellijPlatform {
