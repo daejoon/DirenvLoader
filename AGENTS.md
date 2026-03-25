@@ -26,6 +26,7 @@
 - 새 optional dependency 추가 시 `plugin.xml`의 depends 선언 + `src/main/resources/META-INF/direnv-*.xml` 매핑을 같이 수정한다.
 - `direnv` 실패 경로(실행 불가, blocked, 빈 출력)를 예외 없이 처리한다.
 - 변경 시 최소 1개 이상 관련 테스트(또는 테스트 불가 사유)를 명시한다.
+- `CHANGELOG.md`는 영어로 작성한다. (JetBrains Marketplace 배포 시 `changeNotes`로 렌더링되므로)
 
 ### Don'ts
 - `GeneralCommandLine`/IDE API 호출에서 working directory null 가능성을 무시하지 않는다.
