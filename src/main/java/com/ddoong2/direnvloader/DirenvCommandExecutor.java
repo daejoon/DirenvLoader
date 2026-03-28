@@ -6,12 +6,14 @@ import com.google.gson.reflect.TypeToken;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.openapi.progress.ProgressManager;
 
 import java.io.File;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 // direnv CLI 실행기
 public final class DirenvCommandExecutor {
@@ -58,17 +60,25 @@ public final class DirenvCommandExecutor {
         }
     }
 
-    // direnv 설치 여부 확인
+    // direnv 설치 여부 확인 (EDT에서 호출되어도 안전하도록 백그라운드 스레드에서 실행)
     public static boolean isDirenvInstalled() {
+        AtomicBoolean result = new AtomicBoolean(false);
         try {
-            GeneralCommandLine cmd = new GeneralCommandLine("direnv", "version");
-            cmd.setCharset(StandardCharsets.UTF_8);
-            CapturingProcessHandler handler = new CapturingProcessHandler(cmd);
-            ProcessOutput output = handler.runProcess(TIMEOUT_MS);
-            return output.getExitCode() == 0;
+            ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+                try {
+                    GeneralCommandLine cmd = new GeneralCommandLine("direnv", "version");
+                    cmd.setCharset(StandardCharsets.UTF_8);
+                    CapturingProcessHandler handler = new CapturingProcessHandler(cmd);
+                    ProcessOutput output = handler.runProcess(TIMEOUT_MS);
+                    result.set(output.getExitCode() == 0);
+                } catch (Exception e) {
+                    result.set(false);
+                }
+            }, "Checking direnv installation...", true, null);
         } catch (Exception e) {
             return false;
         }
+        return result.get();
     }
 
     // direnv 명령 실행 공통 메서드
