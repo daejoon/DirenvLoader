@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressManager;
 
 import java.io.File;
@@ -13,7 +14,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 // direnv CLI 실행기
 public final class DirenvCommandExecutor {
@@ -60,28 +61,17 @@ public final class DirenvCommandExecutor {
         }
     }
 
-    // direnv 설치 여부 확인 (EDT에서 호출되어도 안전하도록 백그라운드 스레드에서 실행)
+    // direnv 설치 여부 확인
     public static boolean isDirenvInstalled() {
-        AtomicBoolean result = new AtomicBoolean(false);
         try {
-            ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-                try {
-                    GeneralCommandLine cmd = new GeneralCommandLine("direnv", "version");
-                    cmd.setCharset(StandardCharsets.UTF_8);
-                    CapturingProcessHandler handler = new CapturingProcessHandler(cmd);
-                    ProcessOutput output = handler.runProcess(TIMEOUT_MS);
-                    result.set(output.getExitCode() == 0);
-                } catch (Exception e) {
-                    result.set(false);
-                }
-            }, "Checking direnv installation...", true, null);
-        } catch (Exception e) {
+            ProcessOutput output = execute("version", null, null);
+            return output.getExitCode() == 0;
+        } catch (DirenvException e) {
             return false;
         }
-        return result.get();
     }
 
-    // direnv 명령 실행 공통 메서드
+    // direnv 명령 실행 공통 메서드 (EDT에서 호출되면 자동으로 백그라운드 스레드에서 실행)
     private static ProcessOutput execute(String command, String subCommand, File workDir)
             throws DirenvException {
         try {
@@ -89,9 +79,27 @@ public final class DirenvCommandExecutor {
                     ? new GeneralCommandLine("direnv", command, subCommand)
                     : new GeneralCommandLine("direnv", command);
             cmd.setCharset(StandardCharsets.UTF_8);
-            cmd.setWorkDirectory(workDir);
+            if (workDir != null) {
+                cmd.setWorkDirectory(workDir);
+            }
             CapturingProcessHandler handler = new CapturingProcessHandler(cmd);
-            ProcessOutput output = handler.runProcess(TIMEOUT_MS);
+
+            ProcessOutput output;
+            if (ApplicationManager.getApplication().isDispatchThread()) {
+                // EDT에서 호출된 경우 백그라운드 스레드에서 실행하여 UI 프리징 방지
+                AtomicReference<ProcessOutput> ref = new AtomicReference<>();
+                String title = "Running direnv " + command + (subCommand != null ? " " + subCommand : "") + "...";
+                ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                        () -> ref.set(handler.runProcess(TIMEOUT_MS)),
+                        title, true, null);
+                output = ref.get();
+            } else {
+                output = handler.runProcess(TIMEOUT_MS);
+            }
+
+            if (output == null) {
+                throw new DirenvException("direnv command was cancelled");
+            }
             if (output.isTimeout()) {
                 throw new DirenvException("direnv command timed out (" + TIMEOUT_MS + "ms)");
             }
