@@ -41,11 +41,11 @@
 
 - [x] **S-1** 검증: `./gradlew test` 전체 통과
 - [x] **S-2** 검증: `./gradlew build` 성공
-- [ ] **S-3** 커밋: `isDirenvInstalled()의 EDT 동기 실행 오류 수정`
+- [x] **S-3** 커밋: `isDirenvInstalled()의 EDT 동기 실행 오류 수정`
 
 ---
 
 ## 최종 검증
 
-- [ ] **V-1** `./gradlew test` 전체 통과
-- [ ] **V-2** `./gradlew build` 성공
+- [x] **V-1** `./gradlew test` 전체 통과
+- [x] **V-2** `./gradlew build` 성공
