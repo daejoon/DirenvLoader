@@ -7,14 +7,14 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProgressManager;
 
 import java.io.File;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 // direnv CLI 실행기
 public final class DirenvCommandExecutor {
@@ -71,7 +71,7 @@ public final class DirenvCommandExecutor {
         }
     }
 
-    // direnv 명령 실행 공통 메서드 (EDT에서 호출되면 자동으로 백그라운드 스레드에서 실행)
+    // direnv 명령 실행 공통 메서드 (EDT 또는 ReadAction 내부에서 호출되면 자동으로 백그라운드 스레드에서 실행)
     private static ProcessOutput execute(String command, String subCommand, File workDir)
             throws DirenvException {
         try {
@@ -84,15 +84,13 @@ public final class DirenvCommandExecutor {
             }
             CapturingProcessHandler handler = new CapturingProcessHandler(cmd);
 
+            // EDT 또는 ReadAction 내부에서는 프로세스 실행이 금지되므로 별도 스레드에서 실행
             ProcessOutput output;
-            if (ApplicationManager.getApplication().isDispatchThread()) {
-                // EDT에서 호출된 경우 백그라운드 스레드에서 실행하여 UI 프리징 방지
-                AtomicReference<ProcessOutput> ref = new AtomicReference<>();
-                String title = "Running direnv " + command + (subCommand != null ? " " + subCommand : "") + "...";
-                ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                        () -> ref.set(handler.runProcess(TIMEOUT_MS)),
-                        title, true, null);
-                output = ref.get();
+            if (ApplicationManager.getApplication().isDispatchThread()
+                    || ApplicationManager.getApplication().isReadAccessAllowed()) {
+                Future<ProcessOutput> future = ApplicationManager.getApplication()
+                        .executeOnPooledThread(() -> handler.runProcess(TIMEOUT_MS));
+                output = future.get(TIMEOUT_MS + 1_000L, TimeUnit.MILLISECONDS);
             } else {
                 output = handler.runProcess(TIMEOUT_MS);
             }
@@ -107,6 +105,9 @@ public final class DirenvCommandExecutor {
         } catch (DirenvException e) {
             throw e;
         } catch (Exception e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             throw new DirenvException("Failed to execute direnv: " + e.getMessage(), e);
         }
     }

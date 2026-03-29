@@ -14,6 +14,11 @@
 
 ### Security
 
+## 1.0.4
+
+### Fixed
+- Fix `Synchronous execution under ReadAction` error by adding `isReadAccessAllowed()` check and using `executeOnPooledThread()` instead of `ProgressManager`
+
 ## 1.0.3
 
 ### Fixed
