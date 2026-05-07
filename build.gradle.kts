@@ -2,6 +2,7 @@ import org.jetbrains.changelog.Changelog
 
 plugins {
     id("java")
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.intellij.platform)
     alias(libs.plugins.changelog)
 }
@@ -81,12 +82,22 @@ intellijPlatform {
     }
 }
 
+kotlin {
+    jvmToolchain(providers.gradleProperty("javaVersion").get().toInt())
+}
+
 tasks {
     withType<JavaCompile> {
         val javaVersion = providers.gradleProperty("javaVersion").get()
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
         options.encoding = "UTF-8"
+    }
+
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = providers.gradleProperty("javaVersion").get()
+        }
     }
 
     test {

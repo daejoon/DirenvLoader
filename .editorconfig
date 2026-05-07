@@ -1,0 +1,66 @@
+# 이 파일이 최상위 .editorconfig 임을 표시. 상위 디렉터리 탐색을 여기서 중단한다.
+root = true
+
+[*]
+# 파일 인코딩을 UTF-8 로 고정
+charset = utf-8
+# 파일 마지막에 개행(LF) 삽입 — POSIX 도구 호환 및 diff 깨짐 방지
+insert_final_newline = true
+# 줄 끝 공백 자동 제거 — 의미 있는 공백이 필요한 파일(Markdown 등)은 파일 하단에서 예외 처리
+trim_trailing_whitespace = true
+
+[*.{java,kt,kts}]
+# 권장 최대 줄 길이(초과 시 Reformat 이 줄바꿈 유도)
+max_line_length = 120
+# IntelliJ 에디터 세로 가이드 라인 위치
+ij_visual_guides = 120
+# 들여쓰기 문자를 공백으로 — 탭 혼용 방지
+indent_style = space
+# 들여쓰기 단위 = 4칸
+indent_size = 4
+
+[*.java]
+# 줄바꿈 후 이어지는 연속 라인은 8칸 들여써서 본문과 시각적으로 구분
+continuation_indent_size = 8
+
+# 제어문 키워드와 `(` 사이 공백 강제: `if(` → `if (`, `for(` → `for (` 등
+ij_java_space_before_if_parentheses = true
+ij_java_space_before_for_parentheses = true
+ij_java_space_before_while_parentheses = true
+ij_java_space_before_switch_parentheses = true
+
+# 한 줄짜리 body 에도 `{}` 강제 — dangling-else, goto-fail 류 버그 예방
+ij_java_if_brace_force = always
+ij_java_for_brace_force = always
+ij_java_while_brace_force = always
+ij_java_do_while_brace_force = always
+
+# import 는 항상 단일 클래스 단위로 — `import java.util.*` 금지
+ij_java_use_single_class_imports = true
+# 동일 패키지에서 N개 이상 import 시 `*` 로 전환하는 임계값 → Integer.MAX_VALUE 로 사실상 비활성화
+ij_java_class_count_to_use_import_on_demand = 2147483647
+# static import 도 동일하게 `*` 전환 비활성화
+ij_java_names_count_to_use_import_on_demand = 2147483647
+# `*` import 를 강제로 사용할 패키지 목록 해제
+ij_java_packages_to_use_import_on_demand = unset
+
+[*.{kt,kts}]
+# Kotlin 은 연속 라인도 본문과 동일한 4칸 — 코틀린 공식 스타일 가이드 기준
+continuation_indent_size = 4
+
+# Kotlin 도 star import 임계값을 비활성화하여 명시적 import 유지
+ij_kotlin_name_count_to_use_star_import = 2147483647
+ij_kotlin_name_count_to_use_star_import_for_members = 2147483647
+ij_kotlin_packages_to_use_import_on_demand = unset
+
+# 체인 호출(`receiver.method().method()`)의 강제 멀티라인 개행 규칙 비활성화
+# — Exposed DSL 등 한 줄 체인이 자연스러운 코드 스타일 허용
+ktlint_standard_chain-method-continuation = disabled
+
+[*.{yml,yaml,json,xml}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+# Markdown 은 줄 끝 두 칸 공백(`  `)이 강제 줄바꿈 문법이므로 보존
+trim_trailing_whitespace = false

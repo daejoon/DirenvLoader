@@ -1,6 +1,7 @@
 [versions]
 intellij-platform = "2.3.0"
 changelog = "2.5.0"
+kotlin = "1.9.25"
 junit = "5.11.4"
 junit4 = "4.13.2"
 
@@ -13,3 +14,4 @@ junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher
 [plugins]
 intellij-platform = { id = "org.jetbrains.intellij.platform", version.ref = "intellij-platform" }
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
