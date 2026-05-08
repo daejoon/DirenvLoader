@@ -26,6 +26,9 @@ dependencies {
         bundledPlugin("com.intellij.java")
         bundledPlugin("com.intellij.spring.boot")
 
+        // Plugin Verifier 1.403의 ClosedFileSystemException 회귀를 회피하기 위해 1.402로 고정
+        pluginVerifier("1.402")
+
         testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
     }
 
