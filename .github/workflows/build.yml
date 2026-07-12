@@ -5,15 +5,15 @@
 # - Run the 'runPluginVerifier' task.
 # - Create a draft release.
 #
-# The workflow is triggered on push and pull_request events.
+# The workflow runs only after a pull request targeting main is merged.
 #
 # GitHub Actions reference: https://help.github.com/en/actions
 
 name: Build
 on:
-  push:
-    branches: [ main ]
   pull_request:
+    branches: [ main ]
+    types: [ closed ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -23,6 +23,7 @@ jobs:
 
   build:
     name: Build
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Fetch Sources
@@ -124,7 +125,7 @@ jobs:
 
   releaseDraft:
     name: Release draft
-    if: github.event_name != 'pull_request'
+    if: github.event.pull_request.merged == true
     needs: [ build, test, verify ]
     runs-on: ubuntu-latest
     permissions:
