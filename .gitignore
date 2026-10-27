@@ -163,4 +163,5 @@ replay_pid*
 CLAUDE.md
 .intellijPlatform/
 *.iml
+.envrc
 
