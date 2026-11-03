@@ -14,6 +14,11 @@
 
 ### Security
 
+## 1.0.6
+
+### Changed
+- Extend IntelliJ IDEA compatibility through build 263.*
+
 ## 1.0.5
 
 ### Changed
