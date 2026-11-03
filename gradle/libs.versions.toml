@@ -1,7 +1,7 @@
 [versions]
-intellij-platform = "2.3.0"
+intellij-platform = "2.19.0"
 changelog = "2.5.0"
-kotlin = "1.9.25"
+kotlin = "2.4.21"
 junit = "5.11.4"
 junit4 = "4.13.2"
 

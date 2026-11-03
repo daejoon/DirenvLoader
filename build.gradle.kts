@@ -1,4 +1,5 @@
 import org.jetbrains.changelog.Changelog
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("java")
@@ -87,6 +88,10 @@ intellijPlatform {
 
 kotlin {
     jvmToolchain(providers.gradleProperty("javaVersion").get().toInt())
+
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget(providers.gradleProperty("javaVersion").get())
+    }
 }
 
 tasks {
@@ -95,12 +100,6 @@ tasks {
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
         options.encoding = "UTF-8"
-    }
-
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = providers.gradleProperty("javaVersion").get()
-        }
     }
 
     test {
