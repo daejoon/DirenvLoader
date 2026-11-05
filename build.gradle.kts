@@ -86,6 +86,17 @@ intellijPlatform {
     }
 }
 
+// Multi-Project Workspace 환경 재현용 개발 IDE (plugin.xml depends 없이 sandbox에만 설치)
+intellijPlatformTesting {
+    runIde {
+        register("runIdeWithWorkspace") {
+            plugins {
+                plugin("org.jetbrains.plugins.workspace", "251.26927.53")
+            }
+        }
+    }
+}
+
 kotlin {
     jvmToolchain(providers.gradleProperty("javaVersion").get().toInt())
 
