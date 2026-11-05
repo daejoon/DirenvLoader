@@ -3,9 +3,12 @@ package com.ddoong2.direnvloader
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.RunConfigurationExtension
 import com.intellij.execution.configurations.JavaParameters
+import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.configurations.RunConfigurationBase
 import com.intellij.execution.configurations.RunnerSettings
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.options.SettingsEditor
+import com.intellij.openapi.roots.ModuleRootManager
 import org.jdom.Element
 import java.io.File
 
@@ -54,7 +57,7 @@ class DirenvRunConfigurationExtension : RunConfigurationExtension() {
         }
 
         val project = configuration.project
-        val workDir = resolveWorkDir(params.workingDirectory, project.basePath)
+        val workDir = resolveWorkDir(params.workingDirectory, project.basePath, moduleContentRoots(configuration))
 
         // direnv 설치 확인
         if (!DirenvCommandExecutor.isDirenvInstalled()) {
@@ -84,6 +87,14 @@ class DirenvRunConfigurationExtension : RunConfigurationExtension() {
         }
     }
 
+    // RC에 지정된 모듈의 content root 경로 (모듈 미지정·dispose 시 빈 목록)
+    private fun moduleContentRoots(configuration: RunConfigurationBase<*>): List<String> {
+        val module = (configuration as? ModuleBasedConfiguration<*, *>)?.configurationModule?.module ?: return emptyList()
+        return ReadAction.compute<List<String>, RuntimeException> {
+            if (module.isDisposed) emptyList() else ModuleRootManager.getInstance(module).contentRoots.map { it.path }
+        }
+    }
+
     companion object {
         private const val SERIALIZATION_ID = "com.ddoong2.direnvloader"
         private const val ATTR_ENABLED = "direnv-enabled"
@@ -99,16 +110,27 @@ class DirenvRunConfigurationExtension : RunConfigurationExtension() {
         // direnv 작업 디렉토리 결정: RC working directory → project basePath → user.dir
         // Multi-Project Workspace에서는 basePath가 workspace 폴더라 하위 프로젝트 .envrc를 찾지 못하므로 RC 값을 우선함
         @JvmStatic
-        internal fun resolveWorkDir(workingDirectory: String?, basePath: String?): File {
+        internal fun resolveWorkDir(
+            workingDirectory: String?,
+            basePath: String?,
+            moduleContentRoots: List<String> = emptyList(),
+        ): File {
+            val baseDir = basePath?.let(::File)
+            var resolved = baseDir
             if (workingDirectory != null) {
                 // 상대 경로는 IDE 프로세스 cwd가 아닌 프로젝트 루트 기준으로 해석
                 val raw = File(workingDirectory)
                 val dir = if (!raw.isAbsolute && basePath != null) File(basePath, workingDirectory) else raw
                 if (dir.isDirectory) {
-                    return dir
+                    resolved = dir
                 }
             }
-            return if (basePath != null) File(basePath) else File(System.getProperty("user.dir"))
+            // workspace 플러그인은 Gradle source set 모듈(xxx.main)의 하위 프로젝트를 찾지 못해 working directory를
+            // workspace 폴더(basePath)로 채우므로, 이때는 RC 모듈 위치에서 실행해 direnv가 상위 .envrc를 찾게 함
+            if (baseDir != null && resolved != null && resolved.absoluteFile.normalize() == baseDir.absoluteFile.normalize()) {
+                moduleContentRoots.map(::File).firstOrNull { it.isDirectory }?.let { return it }
+            }
+            return resolved ?: File(System.getProperty("user.dir"))
         }
     }
 }

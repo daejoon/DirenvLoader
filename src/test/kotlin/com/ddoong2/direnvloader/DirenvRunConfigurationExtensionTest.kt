@@ -20,6 +20,22 @@ class DirenvRunConfigurationExtensionTest {
         assertEquals(subProject.toFile(), result)
     }
 
+    // working directory가 basePath(workspace 폴더)와 같으면 RC 모듈의 존재하는 첫 content root 사용
+    @Test
+    fun resolveWorkDir_workingDirectoryEqualsBasePath_returnsFirstExistingContentRoot(@TempDir tempDir: Path) {
+        val workspace = Files.createDirectories(tempDir.resolve("workspace"))
+        val missingRoot = tempDir.resolve("ice-core/build/generated").toString()
+        val sourceRoot = Files.createDirectories(tempDir.resolve("ice-core/src/main"))
+
+        val result = DirenvRunConfigurationExtension.resolveWorkDir(
+            workspace.toString(),
+            workspace.toString(),
+            listOf(missingRoot, sourceRoot.toString()),
+        )
+
+        assertEquals(sourceRoot.toFile(), result)
+    }
+
     // RC working directory가 상대 경로면 basePath 기준으로 해석
     @Test
     fun resolveWorkDir_relativeWorkingDirectory_resolvesAgainstBasePath(@TempDir tempDir: Path) {
