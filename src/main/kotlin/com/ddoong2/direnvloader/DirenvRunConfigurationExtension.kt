@@ -6,9 +6,10 @@ import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.configurations.RunConfigurationBase
 import com.intellij.execution.configurations.RunnerSettings
-import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.util.Computable
 import org.jdom.Element
 import java.io.File
 
@@ -90,9 +91,10 @@ class DirenvRunConfigurationExtension : RunConfigurationExtension() {
     // RC에 지정된 모듈의 content root 경로 (모듈 미지정·dispose 시 빈 목록)
     private fun moduleContentRoots(configuration: RunConfigurationBase<*>): List<String> {
         val module = (configuration as? ModuleBasedConfiguration<*, *>)?.configurationModule?.module ?: return emptyList()
-        return ReadAction.compute<List<String>, RuntimeException> {
+        // ReadAction.compute는 2026.1부터 deprecated이고 대체 API(computeBlocking)는 251에 없어, 두 버전 모두 있는 API를 쓴다
+        return ApplicationManager.getApplication().runReadAction(Computable {
             if (module.isDisposed) emptyList() else ModuleRootManager.getInstance(module).contentRoots.map { it.path }
-        }
+        })
     }
 
     companion object {
