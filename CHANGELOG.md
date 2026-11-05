@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 1.1.1
+
+### Fixed
+
+- Replace `ReadAction.compute`, deprecated since IntelliJ IDEA 2026.1, with `Application.runReadAction` to remove deprecated API usage while keeping support for builds 251–263.*
+
 ## 1.1.0
 
 ### Changed
