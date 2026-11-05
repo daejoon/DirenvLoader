@@ -36,6 +36,66 @@ class DirenvRunConfigurationExtensionTest {
         assertEquals(sourceRoot.toFile(), result)
     }
 
+    // working directory가 basePath와 다른 존재 디렉토리면 모듈 content root보다 working directory 우선
+    @Test
+    fun resolveWorkDir_workingDirectoryDiffersFromBasePath_ignoresContentRoots(@TempDir tempDir: Path) {
+        val workspace = Files.createDirectories(tempDir.resolve("workspace"))
+        val subProject = Files.createDirectories(tempDir.resolve("sub-project"))
+        val sourceRoot = Files.createDirectories(tempDir.resolve("sub-project/src/main"))
+
+        val result = DirenvRunConfigurationExtension.resolveWorkDir(
+            subProject.toString(),
+            workspace.toString(),
+            listOf(sourceRoot.toString()),
+        )
+
+        assertEquals(subProject.toFile(), result)
+    }
+
+    // working directory가 basePath와 같아도 존재하는 content root가 없으면 basePath 사용
+    @Test
+    fun resolveWorkDir_noExistingContentRoot_returnsBasePath(@TempDir tempDir: Path) {
+        val missingRoot = tempDir.resolve("sub-project/src/main").toString()
+
+        val result = DirenvRunConfigurationExtension.resolveWorkDir(
+            tempDir.toString(),
+            tempDir.toString(),
+            listOf(missingRoot),
+        )
+
+        assertEquals(tempDir.toFile(), result)
+    }
+
+    // working directory가 무효해 basePath로 대체되면 모듈 content root 사용
+    @Test
+    fun resolveWorkDir_invalidWorkingDirectory_returnsContentRoot(@TempDir tempDir: Path) {
+        val workspace = Files.createDirectories(tempDir.resolve("workspace"))
+        val sourceRoot = Files.createDirectories(tempDir.resolve("sub-project/src/main"))
+
+        val result = DirenvRunConfigurationExtension.resolveWorkDir(
+            null,
+            workspace.toString(),
+            listOf(sourceRoot.toString()),
+        )
+
+        assertEquals(sourceRoot.toFile(), result)
+    }
+
+    // working directory와 basePath의 표기만 다르면(`/.`) 같은 경로로 보고 모듈 content root 사용
+    @Test
+    fun resolveWorkDir_equivalentBasePathNotation_returnsContentRoot(@TempDir tempDir: Path) {
+        val workspace = Files.createDirectories(tempDir.resolve("workspace"))
+        val sourceRoot = Files.createDirectories(tempDir.resolve("sub-project/src/main"))
+
+        val result = DirenvRunConfigurationExtension.resolveWorkDir(
+            "$workspace/.",
+            workspace.toString(),
+            listOf(sourceRoot.toString()),
+        )
+
+        assertEquals(sourceRoot.toFile(), result)
+    }
+
     // RC working directory가 상대 경로면 basePath 기준으로 해석
     @Test
     fun resolveWorkDir_relativeWorkingDirectory_resolvesAgainstBasePath(@TempDir tempDir: Path) {
