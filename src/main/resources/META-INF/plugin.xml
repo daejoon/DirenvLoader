@@ -44,7 +44,7 @@
     </table>
     <ul>
         <li>Run Configuration variables <b>always take precedence</b> over direnv variables.</li>
-        <li>The working directory for direnv is resolved from the Run Configuration's <b>working directory</b>, falling back to the <b>project root path</b> when it is empty or does not exist. This lets subprojects in a Multi-Project Workspace load their own <code>.envrc</code>. <code>.envrc</code> file lookup is delegated to the direnv CLI.</li>
+        <li>The working directory for direnv is resolved from the Run Configuration's <b>working directory</b>, falling back to the <b>project root path</b> when it is empty or does not exist. When it resolves to the project root, the Run Configuration's module content root is used instead, so subprojects in a Multi-Project Workspace load their own <code>.envrc</code>. <code>.envrc</code> file lookup is delegated to the direnv CLI.</li>
     </ul>
 
     <h3>Requirements</h3>
