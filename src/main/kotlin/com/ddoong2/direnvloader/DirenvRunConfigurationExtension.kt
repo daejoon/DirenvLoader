@@ -6,7 +6,6 @@ import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.configurations.RunConfigurationBase
 import com.intellij.execution.configurations.RunnerSettings
 import com.intellij.openapi.options.SettingsEditor
-import com.intellij.openapi.project.Project
 import org.jdom.Element
 import java.io.File
 
@@ -55,7 +54,7 @@ class DirenvRunConfigurationExtension : RunConfigurationExtension() {
         }
 
         val project = configuration.project
-        val workDir = resolveWorkDir(project)
+        val workDir = resolveWorkDir(params.workingDirectory, project.basePath)
 
         // direnv 설치 확인
         if (!DirenvCommandExecutor.isDirenvInstalled()) {
@@ -85,12 +84,6 @@ class DirenvRunConfigurationExtension : RunConfigurationExtension() {
         }
     }
 
-    // 프로젝트 basePath에서 작업 디렉토리 결정
-    private fun resolveWorkDir(project: Project): File {
-        val basePath = project.basePath
-        return if (basePath != null) File(basePath) else File(System.getProperty("user.dir"))
-    }
-
     companion object {
         private const val SERIALIZATION_ID = "com.ddoong2.direnvloader"
         private const val ATTR_ENABLED = "direnv-enabled"
@@ -102,5 +95,18 @@ class DirenvRunConfigurationExtension : RunConfigurationExtension() {
             direnvEnv: Map<String, String>,
             rcEnv: Map<String, String>,
         ): Map<String, String> = LinkedHashMap(direnvEnv).apply { putAll(rcEnv) }
+
+        // direnv 작업 디렉토리 결정: RC working directory → project basePath → user.dir
+        // Multi-Project Workspace에서는 basePath가 workspace 폴더라 하위 프로젝트 .envrc를 찾지 못하므로 RC 값을 우선함
+        @JvmStatic
+        internal fun resolveWorkDir(workingDirectory: String?, basePath: String?): File {
+            if (workingDirectory != null) {
+                val dir = File(workingDirectory)
+                if (dir.isDirectory) {
+                    return dir
+                }
+            }
+            return if (basePath != null) File(basePath) else File(System.getProperty("user.dir"))
+        }
     }
 }

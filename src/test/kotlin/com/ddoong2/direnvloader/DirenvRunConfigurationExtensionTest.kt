@@ -2,8 +2,22 @@ package com.ddoong2.direnvloader
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Files
+import java.nio.file.Path
 
 class DirenvRunConfigurationExtensionTest {
+
+    // RC working directory가 존재하는 디렉토리면 basePath 대신 그 경로 사용 (workspace 하위 프로젝트)
+    @Test
+    fun resolveWorkDir_existingWorkingDirectory_returnsWorkingDirectory(@TempDir tempDir: Path) {
+        val basePath = Files.createDirectories(tempDir.resolve("workspace"))
+        val subProject = Files.createDirectories(tempDir.resolve("sub-project"))
+
+        val result = DirenvRunConfigurationExtension.resolveWorkDir(subProject.toString(), basePath.toString())
+
+        assertEquals(subProject.toFile(), result)
+    }
 
     // direnv 값 위에 RC 설정값이 덮어쓰는지 확인
     @Test
