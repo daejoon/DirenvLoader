@@ -101,7 +101,9 @@ class DirenvRunConfigurationExtension : RunConfigurationExtension() {
         @JvmStatic
         internal fun resolveWorkDir(workingDirectory: String?, basePath: String?): File {
             if (workingDirectory != null) {
-                val dir = File(workingDirectory)
+                // 상대 경로는 IDE 프로세스 cwd가 아닌 프로젝트 루트 기준으로 해석
+                val raw = File(workingDirectory)
+                val dir = if (!raw.isAbsolute && basePath != null) File(basePath, workingDirectory) else raw
                 if (dir.isDirectory) {
                     return dir
                 }

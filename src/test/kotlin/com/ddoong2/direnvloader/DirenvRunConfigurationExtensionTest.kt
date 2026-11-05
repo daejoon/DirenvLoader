@@ -20,6 +20,16 @@ class DirenvRunConfigurationExtensionTest {
         assertEquals(subProject.toFile(), result)
     }
 
+    // RC working directory가 상대 경로면 basePath 기준으로 해석
+    @Test
+    fun resolveWorkDir_relativeWorkingDirectory_resolvesAgainstBasePath(@TempDir tempDir: Path) {
+        val subModule = Files.createDirectories(tempDir.resolve("direnv-relative-module"))
+
+        val result = DirenvRunConfigurationExtension.resolveWorkDir("direnv-relative-module", tempDir.toString())
+
+        assertEquals(subModule.toFile(), result)
+    }
+
     // RC working directory가 null이면 basePath 사용
     @Test
     fun resolveWorkDir_nullWorkingDirectory_returnsBasePath(@TempDir tempDir: Path) {
