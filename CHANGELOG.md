@@ -10,7 +10,7 @@
 
 ### Fixed
 
-- Fix `.envrc file not found` for subprojects in a Multi-Project Workspace by running direnv in the Run Configuration's working directory, falling back to the project root when it is empty or does not exist
+- Fix `.envrc file not found` for subprojects in a Multi-Project Workspace by running direnv in the Run Configuration's working directory, or in the Run Configuration's module content root when the working directory resolves to the project root
 
 ## 1.0.6
 
