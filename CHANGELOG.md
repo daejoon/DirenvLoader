@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 1.1.0
+
+### Changed
+
+- Require IntelliJ IDEA 2025.1 (build 251) or later; supported builds are now 251–263.*
+
+### Fixed
+
+- Fix `.envrc file not found` for subprojects in a Multi-Project Workspace by running direnv in the Run Configuration's working directory, falling back to the project root when it is empty or does not exist
+
 ## 1.0.6
 
 ### Changed
